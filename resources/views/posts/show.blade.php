@@ -25,7 +25,7 @@
                                 </a>
                             </div>
                         @endforeach
-                    @else 
+                    @else
 
                         <div class="col-md-4 mb-2">
                             <img src="https://dummyimage.com/200x200/000/fff" class="img-fluid" alt="">
@@ -41,9 +41,9 @@
                         </div>
 
                     @endif
-                    
-                    
-                    
+
+
+
                   </div>
 
                 </div>
@@ -54,15 +54,15 @@
                         <p class="p-1 rounded" style="background-color: rgb(255, 209, 45)">
                             Created at: {{ \Carbon\Carbon::parse($post->created_at)->isoFormat('Do MMMM YYYY, h:mm A') }}
                         </p>
-                        
-                        
+
+
                     </div>
                 </div>
 
             </div>
 
-            
-            
+
+
         </div>
     </div>
 </div>

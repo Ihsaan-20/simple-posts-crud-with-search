@@ -1,18 +1,31 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\post;
 
 use App\Models\Post;
+use App\Models\Category;
+
 use App\Models\PostImages;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller;
+
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // public function getSlug(Request $request)
+    // {
+    //     // dd($request->all());
+    //     $slug = '';
+    //     if( !empty($request->title)){
+    //         $slug = Str::slug($request->title);
+    //     }
+    //     return response()->json([
+    //         'status' => true,
+    //         'slug' => $slug
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
         // dd($request->input('search'));
@@ -51,8 +64,9 @@ class PostController extends Controller
      */
     public function create()
     {
+        $categories = Category::latest()->get();
         $pageTitle = 'Create post'; // Your dynamic page title
-        return view('posts.create', compact('pageTitle'));
+        return view('posts.create', compact('pageTitle', 'categories'));
     }
 
     /**
@@ -60,29 +74,43 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $data = new Post();
-        $data->user_id = $request->user_id;
+        $data->user_id = '1';
         $data->category_id = $request->category_id;
         $data->title = $request->title;
+        $data->slug = $request->slug;
+        $data->status = $request->status;
         $data->short_description = $request->short_description;
-        $data->save(); 
+        $data->long_description = $request->long_description;
+        $data->is_featured = $request->is_featured;
+
+        $tags = $request->input('tags');
+        $tagsArray = explode(' ', $tags);
+        $tagsArray = array_filter($tagsArray);
+        $jsonEncodedTags = json_encode($tagsArray);
+
+        $data->tags = $jsonEncodedTags;
+
+
+        $data->save();
 
         if ($request->hasFile('thumbnail')) {
-            $thumbnail = $request->file('thumbnail'); 
-            $thumbnailName = $thumbnail->getClientOriginalName(); 
+            $thumbnail = $request->file('thumbnail');
+            $thumbnailName = $thumbnail->getClientOriginalName();
             $thumbnailDirectory = public_path('images/post/small');
             $thumbnail->move($thumbnailDirectory, $thumbnailName);
-            
+
             // $data->thumbnail = $thumbnailDirectory . '/' . $thumbnailName; // Saving the thumbnail path in the database
             $data->thumbnail = $thumbnailName; // Saving the thumbnail path in the database
-            $data->save(); 
+            $data->save();
         }
         // dd($thumbnailDirectory);
 
 
         if ($request->hasFile('multi_images')) {
             $imageNames = [];
-        
+
             foreach ($request->file('multi_images') as $postImage) {
                 if ($postImage->isValid()) {
                     $postImageName = time().'-'.$postImage->getClientOriginalName();
@@ -104,7 +132,7 @@ class PostController extends Controller
                 $multi_image->save();
             }
         }
-        
+
         return redirect('/')->with('success', 'Post created successfully!');
 
 
@@ -114,25 +142,27 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show( $id)
     {
-        $pageTitle = "$post->title"; 
-        $postWithImages = Post::with('images', 'user','category')->find($post->id);
-    
+        $pageTitle = "Show Page";
+        $postWithImages = Post::with('images', 'user','category')->find($id);
+
         return view('posts.show', ['post' => $postWithImages, 'pageTitle' => $pageTitle]);
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit($id)
     {
         // dd($post->id);
-        $pageTitle = "$post->title"; 
-        $postWithImages = Post::with('images', 'user','category')->find($post->id);
-        // dd($postWithImages);
-        if($postWithImages){
-            return view('posts.edit', ['post' => $postWithImages, 'pageTitle' => $pageTitle]);
+        $pageTitle = "Edit page";
+        $categories = Category::get();
+        $post = Post::with('images', 'user','category')->find($id);
+
+        // dd($post->tags);
+        if($post){
+            return view('posts.edit', compact('categories', 'post', 'pageTitle'));
         }else{
             return back();
         }
@@ -141,18 +171,31 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request)
     {
-        $post_id = $post->id;
-        $data = Post::findOrFail($post_id);
+        // dd($request->all());
+        $data = Post::findOrFail($request->id);
+
 
         if($data)
         {
-            $data->user_id = $request->user_id;
+            $data->user_id = '1';
             $data->category_id = $request->category_id;
             $data->title = $request->title;
+            $data->slug = $request->slug;
+            $data->status = $request->status;
             $data->short_description = $request->short_description;
-            $data->save(); 
+            $data->long_description = $request->long_description;
+            $data->is_featured = $request->is_featured;
+
+            $tags = $request->tags;
+            $tagsArray = explode(' ', $tags);
+            $tagsArray = array_filter($tagsArray);
+            $jsonEncodedTags = json_encode($tagsArray);
+
+            $data->tags = $jsonEncodedTags;
+
+            $data->save();
 
             // thumbnail image;
             if ($request->hasFile('thumbnail')) {
@@ -170,7 +213,7 @@ class PostController extends Controller
             // update multiple images;
             if ($request->hasFile('multi_images')) {
                 $existingImages = $data->images()->pluck('image')->toArray(); // Get existing image names
-            
+
                 foreach ($request->file('multi_images') as $postImage) {
                     if ($postImage->isValid()) {
                         $postImageName = time() . '-' . $postImage->getClientOriginalName();
@@ -179,23 +222,23 @@ class PostController extends Controller
                         $imageNames[] = $postImageName; // Store only the image names
                     }
                 }
-            
+
                 // Remove existing images from storage and database
                 foreach ($existingImages as $existingImage) {
                     if (in_array($existingImage, $imageNames)) {
                         continue; // Skip images that are in the new list
                     }
-                    
+
                     // Delete image from storage
                     $imagePath = $imageDirectory . '/' . $existingImage;
                     if (file_exists($imagePath)) {
                         unlink($imagePath);
                     }
-            
+
                     // Delete image from database
                     $data->images()->where('image', $existingImage)->delete();
                 }
-            
+
                 // Save new images to database
                 $user_id = $data->user_id;
                 foreach ($imageNames as $imageName) {
@@ -206,12 +249,12 @@ class PostController extends Controller
                     $multi_image->save();
                 }
             }
-            
+
 
 
 
         }
-        
+
 
         // dd($request->all());
         return back()->with('success', 'Post updated successfully!');
@@ -221,10 +264,10 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
 
-        $post = Post::with('images')->findOrFail($post->id);
+        $post = Post::with('images')->findOrFail($id);
 
         // Delete the associated thumbnail image
         $thumbnailImage = $post->thumbnail;
@@ -289,7 +332,7 @@ class PostController extends Controller
             $thumbnailImage = $post->thumbnail;
             if ($thumbnailImage) {
                 unlink('images/post/small/' . $thumbnailImage);
-                $post->thumbnail = null; 
+                $post->thumbnail = null;
                 $post->save();
 
                 return response()->json(['status' => true, 'message' => 'Thumbnail image deleted!'], 200);
@@ -300,5 +343,4 @@ class PostController extends Controller
             return response()->json(['status' => false, 'message' => 'Post not found!'], 404);
         }
     }
-
 }

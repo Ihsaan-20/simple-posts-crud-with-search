@@ -15,7 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('short_description');
+            $table->text('long_description')->nullable();
             $table->string('thumbnail')->nullable();
+            $table->string('slug')->unique()->nullable();
+            $table->enum('status', ['draft', 'published','pending ','review'])->nullable();
+            $table->text('tags')->nullable();
+            $table->string('views_count')->nullable();
+            $table->string('likes_count')->nullable();
+            $table->string('comments_count')->nullable();
+            $table->boolean('is_featured')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('category_id')->constrained();
             $table->timestamps();

@@ -13,6 +13,12 @@
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
+
     <style>
         .circular--portrait {
             position: relative;
@@ -30,6 +36,10 @@
             border-radius: 50%;
             /* Makes the image circular */
         }
+        .bootstrap-tagsinput .tag {
+            margin-right: 2px;
+            color: black!important;
+            }
     </style>
 </head>
 
@@ -58,7 +68,7 @@
                         </div>
                     </li>
                 </ul>
-                
+
             </div>
         </nav>
 
@@ -71,8 +81,10 @@
     <footer>
         <!-- place footer here -->
     </footer>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
+
     @yield('customJs')
+
     <script>
         $.ajaxSetup({
             headers: {
@@ -80,6 +92,8 @@
             }
         });
     </script>
+
+    <!-- Lightbox.js JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
     <!-- Bootstrap JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -115,6 +129,7 @@
             });
         @endif
     </script>
+
 
 
 </body>
