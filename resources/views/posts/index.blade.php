@@ -2,7 +2,10 @@
 @section('main-app')
    
     <div class="container">
-        <div class="card mt-2 mb-3">
+        <div class="mb-3 mt-3">
+            <h1 class="text-center">Search with relationships in laravel-10</h1>
+        </div>
+        {{-- <div class="card mt-2 mb-3">
             <div class="card-header">
                 <div class="mb-3">
                     <h1 class="text-center">Search with relationships in laravel-10</h1>
@@ -26,7 +29,7 @@
                         </div>
                     </div>
                 </div>            
-                {{-- <div class="table-responsive">
+                <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
@@ -72,9 +75,9 @@
     
                         </tbody>
                     </table>
-                </div> --}}
+                </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="card-body">
             <div class="row py-2">
