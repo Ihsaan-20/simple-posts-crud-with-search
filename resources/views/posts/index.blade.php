@@ -76,6 +76,26 @@
             </div>
         </div>
 
+        <div class="card-body">
+            <div class="row py-2">
+                <div class="col-md-6">
+                    <div>
+                        <a href="{{ url('create') }}" class="btn btn-primary mb-2">Add new post</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <form action="/index" method="GET">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="search" value="{{isset($search) ? $search : ''}}" placeholder="Search posts...">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>            
+        </div>
+
         <div class="row">
             @foreach ($posts as $key => $post)
             <div class="col-lg-4 col-md-4 col-sm-12 mb-4">

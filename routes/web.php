@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::get('/', [PostController::class, 'index']);
+Route::get('/{search?}', [PostController::class, 'index']);
 Route::get('/search', [PostController::class, 'search']);
 
 Route::get('/create', [PostController::class, 'create']);

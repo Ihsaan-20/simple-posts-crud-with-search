@@ -13,12 +13,18 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // dd($request->input('search'));
         $pageTitle = '__All Post__'; // Your dynamic page title
-
-        $posts =  Post::latest()->paginate(6);
-        return view('posts.index', compact('posts','pageTitle'));
+        $search = $request->input('search');
+        if($search)
+        {
+            $posts =  Post::where('title', 'like', "$search")->paginate(6);
+        }else{
+            $posts =  Post::latest()->paginate(6);
+        }
+        return view('posts.index', compact('posts','pageTitle', 'search'));
     }
 
 
