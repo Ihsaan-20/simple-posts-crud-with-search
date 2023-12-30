@@ -78,15 +78,23 @@
 
         <div class="row">
             @foreach ($posts as $key => $post)
-            <div class="col-lg-4 col-md-4 col-sm-12 mb-2">
+            <div class="col-lg-4 col-md-4 col-sm-12 mb-4">
                 <div class="card" style="height: 100%;">
+                    <div class="d-flex justify-content-between align-items-center p-2">
+                        <p class="text-muted m-0" style="font-size:12px; background-color:rgba(255,255,255,0.2)">Post by: {{ $post->user->name }}</p>
+                        <p class="text-muted m-0" style="font-size:12px; background-color:rgba(255,255,255,0.2)">Category: {{ $post->category->name }}</p>
+                        <p class="text-muted m-0" style="font-size:12px; background-color:rgba(255,255,255,0.2)">
+                            Created at: {{ \Carbon\Carbon::parse($post->created_at)->isoFormat('Do MMMM YYYY') }}
+                        </p>
+                    </div>
+
                     <!-- Card image -->
                     <div class="card-img-top">
                         @if ($post->thumbnail === null)
                             <img src="https://dummyimage.com/200x200/000/fff" class="card-img-top" alt="">
                         @else
                             <a href="{{ asset('images/post/small/'. $post->thumbnail) }}" data-lightbox="post-images" data-title="Post Image">
-                                <img src="{{ asset('images/post/small/'. $post->thumbnail) }}" class="img-fluid" alt="thumbnail" 
+                                <img src="{{ asset('images/post/small/'. $post->thumbnail) }}" class="card-img-top" alt="thumbnail" 
                                 style="height: 405px; width: 405px; object-fit:cover;">
                             </a>
                         @endif
@@ -102,6 +110,7 @@
                             <a onclick="RemovePost({{ $post->id }})" href="#" class="btn btn-danger m-1">Delete</a>
                         </div>
                     </div>
+                    
                 </div>
             </div>
             @endforeach
