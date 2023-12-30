@@ -17,7 +17,7 @@ class PostController extends Controller
     {
         $pageTitle = '__All Post__'; // Your dynamic page title
 
-        $posts =  Post::latest()->paginate(10);
+        $posts =  Post::latest()->paginate(6);
         return view('posts.index', compact('posts','pageTitle'));
     }
 
