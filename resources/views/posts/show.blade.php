@@ -50,8 +50,12 @@
                 <div class="card-footer">
                     <div class="d-flex justify-content-evenly align-items-center">
                         <p class="p-1 rounded" style="background-color: rgb(255,209,45)">Post by: {{ $post->user->name }}</p>
-                        <p class="p-1 rounded" style="background-color: rgb(255,209,45)">Category:{{ $post->category->name }}</p>
-                        <p class="p-1 rounded" style="background-color: rgb(255,209,45)">Created at:{{ $post->created_at }}</p>
+                        <p class="p-1 rounded" style="background-color: rgb(255,209,45)">Category: {{ $post->category->name }}</p>
+                        <p class="p-1 rounded" style="background-color: rgb(255, 209, 45)">
+                            Created at: {{ \Carbon\Carbon::parse($post->created_at)->isoFormat('Do MMMM YYYY, h:mm A') }}
+                        </p>
+                        
+                        
                     </div>
                 </div>
 
